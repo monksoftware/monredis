@@ -14,12 +14,6 @@ You can use the github URI:
 yarn add github:monksoftware/monk-redis
 ```
 
-or
-
-```
-npm install github:monksoftware/monk-redis
-```
-
 or add manually to your `package.json` file
 
 ```json
