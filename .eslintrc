@@ -1,0 +1,30 @@
+{
+  "env": {
+    "commonjs": true,
+    "es6": true
+  },
+  "extends": [
+    "standard",
+    "eslint:recommended",
+    "plugin:node/recommended",
+    "plugin:promise/recommended"
+  ],
+  "plugins": [
+    "promise"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js"]
+      }
+    }
+  },
+  "rules": {
+    "no-await-in-loop": "warn",
+    "no-process-exit": "warn",
+    "no-tabs": "error",
+    "no-var": "error",
+    "semi": ["error", "never"],
+    "eqeqeq": ["error", "always"]
+  }
+}
