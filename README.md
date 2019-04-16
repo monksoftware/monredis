@@ -1,41 +1,53 @@
-# Monk Log library
+# Monredis
 
-This is custom library for connecting to a single or cluster Redis instance based on [ioredis](https://github.com/luin/ioredis/tree/v3.2.2) package
+Monredis is a thin wrapper around
+[ioredis](https://github.com/luin/ioredis/tree/v3.2.2)
+providing improved cluster support and sensible defaults for both
+single-node and cluster redis instances.
 
-## Requirements
-- Node version >= 8.3.0
+## Usage
 
-## Installation
+The module exports a factory function, use it to get a ioredis redis client
 
-Simply add this library as a dependency in your project.
-You can use the github URI:
+```js
+const Redis = require('monredis')
 
-```
-yarn add github:monksoftware/monk-redis
-```
-
-or add manually to your `package.json` file
-
-```json
-  {
-    "dependencies": {
-      [...] ,
-      "monk-redis": "github:monksoftware/monk-redis"
-    }
-  }
+const redisClient = Redis('redis://:authpwd@host:port', {
+  cluster: true,
+  keyPrefix: }
+)
+redisClient.hmset('mymapkey', {fieldone: '1', fieldtwo: '2'})
 ```
 
-## How to use
-
-See `simple.js` file inside `example` folder
+See `simple.js` file inside `example` folder for a more complete example.
 
 ## Documentation
 
-Pass a `config` object with this parameters:
-- `cluster` default to `false`
-- `host` connection uri example `redis://localhost:6439`
-- `keyPrefix` a custom key prefix for all key, default is `monk-redis`
+The factory functions takes 4 arguments:
+
+* `host`: string or array, required.
+  The [redis url](https://www.iana.org/assignments/uri-schemes/prov/redis) to
+  connect to. Can be an array of multiple urls if connecting to a cluster,
+  so that if some nodes are down it will connect to the next one in the array
+  for the initial connection
+* `clientOptions` - main client options, optional
+  * `clientOptions.cluster`: boolean, default `false` - set to `true`
+    if connecting to a cluster instance.
+  * `clientOptions.keyPrefix`: string, default `undefined` - if set,
+    this client will transparently prefix all keys with this string. Useful
+    for namespacing in redis instances shared by multiple projects
+* `nodeOptions`: object, optional -
+  [ioredis redis options](https://github.com/luin/ioredis/blob/master/API.md#new-redisport-host-options)
+* `clusterOptions`: object, optional -
+  [ioredis cluster options](https://github.com/luin/ioredis/blob/master/API.md#Cluster),
+  minus the `redisOptions` key, which we take from the previous `nodeOptions`
+  paramter.
+
+You can check the default values for `nodeOptions` and `clusterOptions` in the
+main source file. The values you provide will overwrite the defaults, so you
+can change a single key or override everything.
 
 ## Todo
-- Better documentation
-- Better test
+
+- Transform to typescript or add typings
+- Improve packaging
