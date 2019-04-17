@@ -2,10 +2,9 @@ const { describe, it } = require('mocha')
 const chai = require('chai')
 const expect = chai.expect
 
-const redis = require('../index')({
-  cluster: false,
-  host: 'redis://localhost:6379'
-})
+const Redis = require('../index')
+
+const redis = Redis('redis://localhost:6379')
 
 describe('redis client', () => {
   it('should connect to single node', () => {
