@@ -1,35 +1,44 @@
-const { describe, it } = require('mocha')
+const { before, describe, it } = require('mocha')
 const chai = require('chai')
-const expect = chai.expect
+const chaiAsPromised = require('chai-as-promised')
 
 const Redis = require('../index')
 
-const redis = Redis('redis://localhost:6379')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
-describe('redis client', () => {
-  it('should connect to single node', () => {
-    expect(redis.constructor.name).is.equal('Redis')
+describe('redis client', function () {
+  before('set up redis client', function () {
+    this.redis = Redis('redis://localhost:6379', {}, {lazyConnect: true})
   })
-  it('should get a null value', async () => {
-    const res = await redis.get('fakeVal')
-    expect(res).to.be.null
+  it('should support ioredis lazyConnect option', function () {
+    this.timeout(2000)
+    expect(this.redis.status).to.equal('wait')
   })
-  it('should set a value', async () => {
-    const res = await redis.set('foo', 'bar')
-    expect(res).to.have.string('OK')
+  it('should correctly connect to single node', async function () {
+    this.timeout(2000)
+    const promise = this.redis.connect()
+    expect(this.redis.status).to.equal('connecting')
+    await promise
+    expect(this.redis.status).to.equal('connect')
   })
-  it('should get a value', async () => {
-    const res = await redis.get('foo')
-    expect(res).to.have.string('bar')
+  it('should get a null value', function () {
+    return expect(this.redis.get('fakeval032943285')).to.eventually.be.null
   })
-  it('should delete a value', async () => {
-    const res = await redis.del('foo')
-    expect(res).to.equal(1)
+  it('should set a value', function () {
+    return expect(this.redis.set('foo', 'bar')).to.eventually.have.string('OK')
+  })
+  it('should get a value', function () {
+    return expect(this.redis.get('foo')).to.eventually.have.string('bar')
+  })
+  it('should delete a value', function () {
+    return expect(this.redis.del('foo')).to.eventually.equal(1)
   })
   it('should emit an end event', function(done) {
     this.timeout(2000)
-    redis.disconnect()
-    redis.once('end', () => {
+    this.redis.disconnect()
+    this.redis.once('end', () => {
+      expect(this.redis.status).to.equal('end')
       done()
     })
   })
