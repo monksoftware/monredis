@@ -6,10 +6,15 @@ const Redis = require('../index')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
+if (!process.env.REDIS_HOST) {
+  throw new Error(
+    'You must set the redis host to use for testing in the REDIS_HOST'
+    +' environment variable.')
+}
 
 describe('redis client', function () {
   before('set up redis client', function () {
-    this.redis = Redis('redis://localhost:6379', {}, {lazyConnect: true})
+    this.redis = Redis(process.env.REDIS_HOST, {}, {lazyConnect: true})
   })
   it('should support ioredis lazyConnect option', function () {
     this.timeout(2000)
