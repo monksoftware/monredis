@@ -8,7 +8,7 @@
   "description": "Redis library for Monk projects",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --colors",
+    "test": "mocha --colors --exit",
     "lint": "eslint . --ext js"
   },
   "files": [
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^5.13.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",

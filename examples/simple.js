@@ -2,10 +2,9 @@
 /* eslint-disable no-console */
 'use strict'
 
-const client = require('../lib/redis')({
-  cluster: false,
-  host: 'redis://localhost:6379'
-})
+const Redis = require('../lib/redis')
+
+const client = Redis('redis://localhost:6379')
 
 client.on('ready', () => { console.log('Connection ready') })
 client.on('error', (arg) => {
