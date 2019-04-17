@@ -12,9 +12,14 @@ The module exports a factory function, use it to get a ioredis redis client
 ```js
 const Redis = require('monredis')
 
-const redisClient = Redis('redis://:authpwd@host:port', {
-  cluster: true,
-  keyPrefix: }
+// Single node redis instance
+const redisClient = Redis('redis://:authpwd@host:port')
+
+// Redis cluster
+const redisClusterClient = Redis(
+  'redis://:authpwd@host:port',
+  true,
+  {keyPrefix: 'myprefix'}
 )
 redisClient.hmset('mymapkey', {fieldone: '1', fieldtwo: '2'})
 ```
@@ -30,12 +35,7 @@ The factory functions takes 4 arguments:
   connect to. Can be an array of multiple urls if connecting to a cluster,
   so that if some nodes are down it will connect to the next one in the array
   for the initial connection
-* `clientOptions` - main client options, optional
-  * `clientOptions.cluster`: boolean, default `false` - set to `true`
-    if connecting to a cluster instance.
-  * `clientOptions.keyPrefix`: string, default `undefined` - if set,
-    this client will transparently prefix all keys with this string. Useful
-    for namespacing in redis instances shared by multiple projects
+* `cluster`: boolean, default `false` - pass `true` to connect to redis cluster
 * `nodeOptions`: object, optional -
   [ioredis redis options](https://github.com/luin/ioredis/blob/master/API.md#new-redisport-host-options)
 * `clusterOptions`: object, optional -
@@ -47,6 +47,24 @@ You can check the default values for `nodeOptions` and `clusterOptions` in the
 main source file. The values you provide will overwrite the defaults, so you
 can change a single key or override everything.
 
+### Keys prefix
+
+One particularly useful param in `nodeOptions` is the `keyPrefix` one:
+if supplied, all keys in the commands executed by the client will be
+automatically and transparently prefixed with the value. For example:
+
+```js
+const Monredis = require('monredis')
+const redis = Monredis('redis://localhost:6379', false, {keyPrefix: 'dev:'})
+
+// Will actually create and read 'dev:mymapkey'
+redisClient.set('mykey', 'value')
+redisClient.get('mykey')
+```
+
+This is great for namespacing of keys in shared redis instances, or you can
+also use this feature to [force all your keys to end up in a single redis
+cluster node by providing a prefix between `{}` brackets.](https://redis.io/topics/cluster-tutorial#redis-cluster-data-sharding)
 ## Todo
 
 - Transform to typescript or add typings
