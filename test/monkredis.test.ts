@@ -1,8 +1,8 @@
-const { before, describe, it } = require('mocha')
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
+import { before, describe, it } from 'mocha'
+import * as chai from 'chai'
+import * as chaiAsPromised from 'chai-as-promised'
 
-const Redis = require('../index')
+import Redis = require('../lib/redis')
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -15,7 +15,7 @@ if (!process.env.REDIS_HOST) {
 describe('redis client', function () {
   before('set up redis client', function () {
     this.redis = Redis(
-      process.env.REDIS_HOST,
+      process.env.REDIS_HOST!,
       false,
       {keyPrefix: 'monredistests:', lazyConnect: true},
     )
