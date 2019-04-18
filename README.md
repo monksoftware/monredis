@@ -71,8 +71,3 @@ This is great for namespacing of keys in shared redis instances, or you can
 also use this feature to [force all your keys to end up in a single redis
 cluster node by providing a prefix between `{}` brackets.](
 https://redis.io/topics/cluster-tutorial#redis-cluster-data-sharding)
-
-## Todo
-
-- Transform to typescript or add typings
-- Improve packaging
